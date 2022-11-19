@@ -1,0 +1,63 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.15;
+
+contract StudentData {
+    struct Student {
+        string fname;
+        string lname;
+        uint rollNo;
+    }
+
+    Student[] private studentList;
+
+    
+
+    function addStudent(string memory _fname, string memory _lname, uint _rollNo) public returns(string memory) {
+        require(_rollNo > 0, "0 Roll is not allowed");
+        studentList.push(Student(_fname, _lname, _rollNo));
+        return "added Student Details";
+    }
+
+    function getStudent(uint _rollNo) public view returns(Student memory) {
+        bool found;
+        Student memory student;
+
+        for(uint i=0; i<studentList.length; i++) {
+            if(studentList[i].rollNo != _rollNo) continue;
+
+            found = true;
+            student = studentList[i];
+            break;
+        }
+
+        require(found, "No such Student Details found");
+        return student;
+    }
+
+    function removeStudent(uint _rollNo) public returns(string memory) {
+        bool found;
+        uint idx;
+
+        for(uint i=0; i<studentList.length; i++) {
+            if(studentList[i].rollNo != _rollNo) continue;
+
+            found = true;
+            idx = i;
+            break;
+        }
+
+        require(found, "No such Student in Record");
+        studentList[idx] = studentList[studentList.length - 1];
+        studentList.pop();
+
+        return "Removed student Successfully";
+    }
+
+    function allStudent() public view returns(Student[] memory) {
+        return studentList;
+    }
+
+    fallback() external {
+        revert("Not Allowed");
+    }
+}
